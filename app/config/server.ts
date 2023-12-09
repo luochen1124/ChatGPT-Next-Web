@@ -63,13 +63,17 @@ export const getServerSideConfig = () => {
   const isAzure = !!process.env.AZURE_URL;
 
   const apiKeyEnvVar = process.env.OPENAI_API_KEY ?? "";
-  const apiKeys = apiKeyEnvVar.split(",").map((v) => v.trim());
+ // const apiKeys = apiKeyEnvVar.split(",").map((v) => v.trim());
+  const apiKeys = (process.env.OPENAI_API_KEY ?? '').split(',')
   const randomIndex = Math.floor(Math.random() * apiKeys.length);
-  const apiKey = apiKeys[randomIndex];
+    // 增加Key池实现多Key 轮询
+// 从这里开始
+
+  const apiKey = apiKeys.at(Math.floor(Math.random() * apiKeys.length)) ?? ''
+  //const apiKey = apiKeys[randomIndex];
   console.log(
     `[Server Config] using ${randomIndex + 1} of ${apiKeys.length} api key`,
-  );
-
+  );  
   return {
     baseUrl: process.env.BASE_URL,
     apiKey,
